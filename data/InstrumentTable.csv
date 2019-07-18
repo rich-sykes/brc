@@ -1,0 +1,9 @@
+InstrumentCode,InstrumentDescription,InstrumentAssetClass,InstrumentCurrency
+1,S&P500,Equity,USD
+4,Russel 2000,Equity,USD
+16,US 10Y,FI,USD
+19,US Long Bond,FI,USD
+47,CAD,FX,USD
+48,JPY,FX,USD
+119,MSCI EM,Equity,USD
+124,Cocoa (ICE US),Commodities,USD

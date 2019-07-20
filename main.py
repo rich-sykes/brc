@@ -45,20 +45,22 @@ def filter_date(trade_data, reporting_date):
 
     return trade_data
 
-contract_names = ["CCN9 Comdty", "CDM9 Curncy"]
+contract_tickers = ["CCN9 Comdty", "CDM9 Curncy"]
 
 
 def filter_contract(trade_data, contract_names):
 
-    trade_data = trade_data[trade_data['Contract Ticker'].isin(contract_names)]
+    trade_data = trade_data[trade_data['Contract Ticker'].isin(contract_tickers)]
 
     return trade_data
 
 
-
+"""
 def positions_held(trade_data, reporting_date):
+"""
 
-def agg_contracts(trade_data, contract_names, date_dt):
+
+def agg_contracts(trade_data, contract_tickers, date_dt):
 
     contract_data = get_contract_data()
 
@@ -68,28 +70,28 @@ def agg_contracts(trade_data, contract_names, date_dt):
 
     # daily price
     price_data = get_price_data()
-    price_data = price_data[contract_names]
-    price_data = price_data[contract_names][price_data.index <= date_dt]
+
+    # filter to by contracts
+    price_data = price_data[contract_tickers]
+    price_data = price_data[contract_tickers][price_data.index <= date_dt]
     df_p = pd.melt(price_data.reset_index(),
                    id_vars='Date',
-                   value_vars=contract_names,
+                   value_vars=contract_tickers,
                    var_name='Contract Ticker',
                    value_name='Daily Price'
                    ).set_index('Date')
     # final price
-    price_data_final = price_data[contract_names][price_data.index == date_dt]
+    price_data_final = price_data[contract_tickers][price_data.index == date_dt]
     df_pf = pd.melt(price_data_final.reset_index(),
                    id_vars='Date',
-                   value_vars=contract_names,
+                   value_vars=contract_tickers,
                    var_name='Contract Ticker',
                    value_name='Final Price'
                    ).set_index('Date')
 
+    df_merge = pd.merge(df, df_p) #.set_index('Trade Date')
 
-
-    df_merge = pd.merge(df,df_p).set_index('Trade Date')
-
-    df_merge = pd.merge(df_merge,df_pf).set_index('Trade Date')
+    df_merge = pd.merge(df_merge, df_pf).set_index('Trade Date')
 
     # daily p/l
     # PriceChange * Multiplier * TradeAmount * IF(SELL, -1, 1)

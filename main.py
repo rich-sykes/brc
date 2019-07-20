@@ -176,6 +176,9 @@ def agg_contracts(trade_data, contract_data, price_data, instrument_data, contra
 
 
     # Valuation sum units * current price
+    df_overall = df_merge.groupby(by=aggregation_level)[aggregation_level, 'P/L'].sum()
 
+    # TODO -
+    # df_merge.groupby(by=aggregation_level)['Traded Amount'].sum()
 
 

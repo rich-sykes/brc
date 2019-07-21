@@ -1,0 +1,33 @@
+stages:
+  - test
+  - deploy
+
+richsykes: 
+ image: python:3.6.0
+ stage: test
+ 
+ before_script:
+  - echo -e "deb http://deb.debian.org/debian jessie main\ndeb http://security.debian.org jessie/updates main" > /etc/apt/sources.list
+  
+ script:
+  - apt-get update -qy
+  - apt-get install -y python-dev python-pip
+  - pip install pipenv
+  - pipenv install
+  #TODO: Should be testing here
+  # weekly/daily schedule example
+  # https://jingwen-z.github.io/automate-py-jobs-by-gitlab-runner/
+  # - python ./tests/dev_test.py
+
+
+#Staging here
+
+production:
+ stage: deploy
+ script:
+   - apt-get update -qy
+   - apt-get install -y ruby-dev
+   - gem install dpl
+   - dpl --provider=heroku --app=brcportfolio --api-key=$HEROKU_STAGING_API_KEY
+ only:
+  - master

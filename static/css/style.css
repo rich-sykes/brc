@@ -1,0 +1,75 @@
+/* A. David
+Custom CSS
+24/09/2017
+*/
+
+/* page title within the navbar.html */
+#page_title{
+    color: black;
+    text-align: center !important;
+}
+
+/*Navbar colour */
+.navbar-custom {
+    background-color: #36424a; /*#40495a; #187249;*/
+}
+
+/* Body Bakcground colour #eff0ea */
+body{
+    background-color: #FFFFFF !important;
+}
+
+/*Navigation Bar - background colour and hover colour*/
+.navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav > li > a:focus {
+    background-color: #FFFFFF !important;
+    color: #808080 !important;
+}
+/* Font colour of the link */
+.navbar-default .navbar-nav>li>a {
+    color: #FFFFFF !important;
+}
+
+
+/*BTC Arbitrage table */
+#btc_arbitrage_table{
+    background-color:black;
+    color: white;
+}
+
+/*Highlight social media table on hover */
+#coins_dt tbody tr.even:hover, #coins_dt tbody tr.even td.highlighted {
+        background-color: #C5E3BF;
+}
+
+#coins_dt tbody tr.odd:hover, #coins_dt tbody tr.odd td.highlighted {
+        background-color: #C5E3BF;
+}
+
+/* highlight project development table on hover */
+#project_dt tbody tr.even:hover, #project_dt tbody tr.even td.highlighted {
+        background-color: #C5E3BF;
+}
+
+#project_dt tbody tr.odd:hover, #project_dt tbody tr.odd td.highlighted {
+        background-color: #C5E3BF;
+}
+
+
+
+/* Transition Matrix Formatting
+table.dataframe, .dataframe th, .dataframe td {
+  border: none;
+  border-bottom: 1px solid #C8C8C8;
+  border-collapse: collapse;
+  text-align:left;
+  padding: 10px;
+  margin-bottom: 40px;
+  font-size: 0.9em;
+  background-color: #ffff99;
+  color: black;
+}
+
+tr:hover {
+   background-color: #add8e6;
+   }
+*/

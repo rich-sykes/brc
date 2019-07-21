@@ -1,0 +1,105 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet", href="{{ url_for('static', filename='css/style.css')}}">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+
+
+
+{% block content %}
+<!-- Modal For Inserting a New Position -->
+<div class="container">
+    <div class="col-md-4">
+        <div class="row">
+
+            <form id="agg_form" method="POST" action="{{ url_for('portfolio')}}">
+                {{ form.csrf_token }}
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ wtf.form_field(form.reporting_date)}}
+                        </div>
+                        <div class="col-md-6">
+                            {{ wtf.form_field(form.aggregation_level)}}
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-primary" value="Submit"/>
+                </div>
+
+            </form>
+
+
+        </div>
+    </div>
+
+    <div class="col-md-8">
+    {% if not contracts.empty %}
+    <div class="panel with-nav-tabs panel-default">
+
+        <div class="panel-body">
+            <div class="tab-content">
+
+                <h4>Position held in the portfolio (in contracts)</h4>
+                <div class="tab-pane fade active in" id="contracts">
+
+                    {{ contracts|safe }}
+                </div>
+
+                <h4>Valuation</h4>
+                <div class="tab-pane fade active in" id="valuation">
+
+                    {{ value|safe }}
+                </div>
+
+                <h4>Daily</h4>
+                <div class="tab-pane fade active in" id="daily">
+
+                    {{ daily|safe }}
+                </div>
+
+                <h4>Month to Date</h4>
+                <div class="tab-pane fade active in" id="month">
+
+                    {{ month|safe }}
+                </div>
+
+                <h4>Year to Date</h4>
+                <div class="tab-pane fade active in" id="year">
+
+                    {{ year|safe }}
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+    {% endif %}
+</div>
+
+
+
+
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+
+
+{% endblock %}

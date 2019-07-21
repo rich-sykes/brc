@@ -1,4 +1,4 @@
-InstrumentCode,InstrumentDescription,InstrumentAssetClass,InstrumentCurrency
+Instrument Code,Instrument Description,Instrument Asset Class,Instrument Currency
 1,S&P500,Equity,USD
 4,Russel 2000,Equity,USD
 16,US 10Y,FI,USD

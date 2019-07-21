@@ -6,6 +6,7 @@ verify_ssl = false
 [dev-packages]
 
 [packages]
+gunicorn = "==19.9.0"
 pandas = "*"
 flask = "*"
 flask-bootstrap = "*"

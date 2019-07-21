@@ -1,5 +1,5 @@
 # import libraries
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from flask_bootstrap import Bootstrap
 import requests
 
@@ -12,13 +12,18 @@ bootstrap = Bootstrap(app)
 
 app.config['SECRET_KEY'] = 'testkey'
 
+
 # main page
-@app.route('/portfolio', methods=['POST', 'GET'])
-def portfolio():
+@app.route('/', methods=['POST', 'GET'])
+def index():
 
     form = PortfolioAgg()
 
     contracts = []
+    value = []
+    daily = []
+    month = []
+    year = []
 
     if form.validate_on_submit():
 

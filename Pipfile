@@ -7,6 +7,9 @@ verify_ssl = false
 
 [packages]
 pandas = "*"
+flask = "*"
+flask-bootstrap = "*"
+flask-wtf = "*"
 
 [requires]
 python_version = "3.6"

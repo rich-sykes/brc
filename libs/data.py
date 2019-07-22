@@ -32,12 +32,40 @@ def get_contract_data():
     
     # import contract_table
     contract_table = pd.read_csv(source_path + "ContractTable.csv")
-    
+
     # format contract_table
     contract_table['Instrument Code'] = contract_table['Instrument Code'].astype(int)
     contract_table['Contract Multiplier'] = contract_table['Contract Multiplier'].astype(float)
-    # contract_table['Contract Description']
     contract_table['Contract Ticker'] = contract_table['Contract Ticker'].str.strip()
+
+    contract_table['Contract Expiry'] = contract_table['Contract Description'].str.extract('([A-Z]{1}[a-z]{2}[0-9]{2})',
+                                                                                           expand=True)
+
+    # todo: confirm month end
+    from pandas.tseries.offsets import MonthEnd
+    contract_table['Contract Expiry'] = pd.to_datetime(contract_table['Contract Expiry'], format="%b%y") + MonthEnd(1)
+
+    contract_table.loc[contract_table['Contract Ticker'] == 'CDM9 Curncy', 'Contract Expiry'] \
+        = pd.to_datetime("18/06/2019", format="%d/%m/%Y")
+
+    contract_table.loc[contract_table['Contract Ticker'] == 'ESM9 Index', 'Contract Expiry'] \
+        = pd.to_datetime("21/06/2019", format="%d/%m/%Y")
+
+    contract_table.loc[contract_table['Contract Ticker'] == 'JYM9 Curncy', 'Contract Expiry'] \
+        = pd.to_datetime("17/06/2019", format="%d/%m/%Y")
+
+    contract_table.loc[contract_table['Contract Ticker'] == 'MESM9 Index', 'Contract Expiry'] \
+        = pd.to_datetime("21/06/2019", format="%d/%m/%Y")
+
+    contract_table.loc[contract_table['Contract Ticker'] == 'RTYM9 Index', 'Contract Expiry'] \
+        = pd.to_datetime("21/06/2019", format="%d/%m/%Y")
+
+    contract_table.loc[contract_table['Contract Ticker'] == 'TYM9 Comdty', 'Contract Expiry'] \
+        = pd.to_datetime("19/06/2019", format="%d/%m/%Y")
+
+    contract_table.loc[contract_table['Contract Ticker'] == 'USM9 Comdty', 'Contract Expiry'] \
+        = pd.to_datetime("19/06/2019", format="%d/%m/%Y")
+
 
     return contract_table
 

@@ -79,16 +79,15 @@ def agg_contracts(reporting_date, aggregation_level):
 
     # filter to date of report
     trade_data = trade_data[trade_data.index <= current_date]
-    # trade_data = trade_data[trade_data['Contract Ticker'].isin(contract_tickers)]
 
     # enrich with contract info
     df = pd.merge(trade_data.reset_index(),
                   contract_data[['Contract Ticker', 'Contract Description', 'Instrument Code', 'Contract Multiplier', 'Contract Expiry']],
                   on=['Contract Ticker'])
 
-    # contract expired
+    # contract expired flag
     df['Expired'] = 0
-    df['Expired'][current_date > df['Contract Expiry']] = 1
+    df['Expired'][current_date >= df['Contract Expiry']] = 1
 
 
     # enrich with instrument info
@@ -97,11 +96,10 @@ def agg_contracts(reporting_date, aggregation_level):
                       'Instrument Code', 'Instrument Description', 'Instrument Asset Class', 'Instrument Currency']],
                   on=['Instrument Code'])
 
-
+    # get ticker list
     contract_tickers = df['Contract Ticker'].unique().tolist()
 
-
-    # price_data = price_data[price_data.index <= current_date]
+    # latest prices
     df_price_latest = pd.melt(price_data[price_data.index == current_date].reset_index(),
                                id_vars='Date',
                                value_vars=contract_tickers,
@@ -122,35 +120,26 @@ def agg_contracts(reporting_date, aggregation_level):
                               )
     df_price_expiry['Expiry Date'] = df_price_expiry['Date']
 
+    # merge prices
     df_merge = pd.merge(df_merge, df_price_expiry[['Contract Ticker', 'Expiry Price', 'Expiry Date']],
                         left_on=['Contract Ticker', 'Contract Expiry'],
                         right_on=['Contract Ticker', 'Expiry Date'], how='left')
-
 
 
     # sort by date
     df_merge.set_index('Date', inplace=True)
     df_merge.sort_index(inplace=True)
 
+    # get final price - current trading price or expiry price
     df_merge['Final Price'] = df_merge['Latest Price']
-
     df_merge['Final Price'][df_merge['Expired'] == 1] = df_merge['Expiry Price'][df_merge['Expired'] == 1]
 
 
-    # overall p/l
+    # overall P/L
     df_merge['Price Change'] = df_merge['Final Price'] - df_merge['Avg Price Traded']
     df_merge['P/L'] = df_merge['Price Change'] * \
                             df_merge['Contract Multiplier'] * \
                             df_merge['Traded Amount']
-
-    """
-    # daily p/l: PriceChange * Multiplier * TradeAmount * IF(SELL, -1, 1)
-    df_merge['Daily Price Change'] = df_merge['Daily Price'] - df_merge['Avg Price Traded']
-    df_merge['Daily P/L'] = df_merge['Daily Price Change'] * \
-                            df_merge['Contract Multiplier'] * \
-                            df_merge['Traded Amount']
-
-    """
 
     # re-order
     """
@@ -165,9 +154,6 @@ def agg_contracts(reporting_date, aggregation_level):
                          'Instrument Code', 'Instrument Description', 'Instrument Asset Class', 'Instrument Currency',
                          'Contract Multiplier', 'Traded Amount', 'Avg Price Traded',
                          'Final Price', 'Price Change', 'Expired', 'P/L']]
-
-
-    #df_overall = df_merge.groupby(by=aggregation_level)[aggregation_level, 'P/L'].sum()
 
     # Daily P&L
     # df_daily = df_merge[df_merge.index >= current_date].groupby(by=aggregation_level)['Contract Ticker', 'P/L'].sum()

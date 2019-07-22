@@ -30,9 +30,8 @@ def index():
         aggregation_level = request.form.get('aggregation_level')
         reporting_date = request.form.get('reporting_date')
 
-        print(reporting_date)
 
-        output = agg_contracts(reporting_date='28/06/2019', aggregation_level=aggregation_level)
+        output = agg_contracts(reporting_date=reporting_date, aggregation_level=aggregation_level)
 
         import pandas as pd
         contracts = pd.DataFrame(output['contracts']).to_html()
@@ -41,10 +40,6 @@ def index():
         daily = pd.DataFrame(output['daily']).to_html()
         month = pd.DataFrame(output['month']).to_html()
         year = pd.DataFrame(output['year']).to_html()
-
-
-
-
 
     return render_template('portfolio.html', title='Home Page', form=form,
                            contracts=contracts,

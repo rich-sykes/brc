@@ -6,93 +6,133 @@
 {% endblock %}
 
 {% block styles %}
-<link rel="stylesheet", href="{{ url_for('static', filename='css/style.css')}}">
+<link rel="stylesheet" , href="{{ url_for('static', filename='css/style.css')}}">
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}
 
+{% include "navbar.html" %}
 
 
 {% block content %}
 <!-- Modal For Inserting a New Position -->
 <div class="container">
-    <div class="col-md-4">
-        <div class="row">
 
-            <form id="agg_form" method="POST" action="{{ url_for('index')}}">
-                {{ form.csrf_token }}
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <b>Specify Aggregation</b>
+            </div>
+            <div class="panel-body">
+                <form id="agg_form" method="POST" action="{{ url_for('index')}}">
+                    {{ form.csrf_token }}
 
-                <div class="modal-body">
-                    <div class="row">
+                    <div class="modal-body">
+
                         <div class="col-md-6">
                             {{ wtf.form_field(form.reporting_date)}}
-                        </div>
-                        <div class="col-md-6">
                             {{ wtf.form_field(form.aggregation_level)}}
+                            <input type="submit" class="btn btn-primary" value="Submit"/>
                         </div>
-
                     </div>
-                </div>
-
-                <div class="modal-footer">
-                    <input type="submit" class="btn btn-primary" value="Submit"/>
-                </div>
-
-            </form>
-
-
-        </div>
-    </div>
-
-    <div class="col-md-8">
-    {% if not contracts.empty %}
-    <div class="panel with-nav-tabs panel-default">
-
-        <div class="panel-body">
-            <div class="tab-content">
-
-                <h4>Position held in the portfolio (in contracts)</h4>
-                <div class="tab-pane fade active in" id="contracts">
-
-                    {{ contracts|safe }}
-                </div>
-
-                <h4>Valuation</h4>
-                <div class="tab-pane fade active in" id="valuation">
-
-                    {{ value|safe }}
-                </div>
-
-                <h4>Daily</h4>
-                <div class="tab-pane fade active in" id="daily">
-
-                    {{ daily|safe }}
-                </div>
-
-                <h4>Month to Date</h4>
-                <div class="tab-pane fade active in" id="month">
-
-                    {{ month|safe }}
-                </div>
-
-                <h4>Year to Date</h4>
-                <div class="tab-pane fade active in" id="year">
-
-                    {{ year|safe }}
-                </div>
-
+                </form>
             </div>
         </div>
     </div>
+
+
+    <div class="row">
+        {% if not contracts_df.empty %}
+        <div class="col-md-4">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <b>Contracts Held</b>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        {{ contracts_df | safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if not value_df.empty %}
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <b>Portfolio Value</b>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        {{ value_df | safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
     </div>
-    {% endif %}
+
+    <div class="row">
+    </div>
+
+
+    <div class="row">
+        {% if not daily_df.empty %}
+        <div class="col-md-4">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <b>Return: Daily</b>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        {{ daily_df | safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if not month_df.empty %}
+        <div class="col-md-4">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <b>Return: Month to Date</b>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        {{ month_df | safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if not year_df.empty %}
+        <div class="col-md-4">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <b>Return: Year to Date</b>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        {{ year_df | safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+
+    </div>
+
+
 </div>
-
-
-
-
-</div>
-
 
 {% endblock %}
 
@@ -100,6 +140,9 @@
 <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.10.19/sorting/numeric-comma.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.10.19/sorting/percent.js"></script>
 
 
 {% endblock %}

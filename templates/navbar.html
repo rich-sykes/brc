@@ -1,0 +1,35 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}
+Broad Reach Captial
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+{% endblock %}
+
+{% block navbar %}
+<!-- Static navbar -->
+<nav class="navbar navbar-default navbar-static-top">
+    <div class="container">
+        <div class="col-md-12">
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="{{url_for('index') }}">
+                        <b>Home</b></a>
+                    </li>
+
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+{% endblock %}
+{% block scripts %}
+{{ super () }}
+{% endblock %}
+

@@ -1,0 +1,19 @@
+/*Navigation Bar - background colour and hover colour*/
+.navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav > li > a:focus {
+    background-color: #f7618b !important;
+    color: #FFFFFF !important;
+}
+/* Font colour of the link */
+.navbar-default .navbar-nav>li>a {
+    color: #FFFFFF !important;
+}
+
+.navbar-default{
+    font-weight: bold;
+    background-color: #1d213c;
+}
+
+.btn-default {
+    color: #f7618b;
+    background-color: #FFFFFF;
+}

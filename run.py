@@ -2,6 +2,7 @@
 from flask import Flask, render_template, request, redirect
 from flask_bootstrap import Bootstrap
 import requests
+import pandas as pd
 
 from forms.input_form import PortfolioAgg
 from main import agg_contracts
@@ -19,11 +20,11 @@ def index():
 
     form = PortfolioAgg()
 
-    contracts = []
-    value = []
-    daily = []
-    month = []
-    year = []
+    contracts_df = pd.DataFrame()
+    value_df = pd.DataFrame()
+    daily_df = pd.DataFrame()
+    month_df = pd.DataFrame()
+    year_df = pd.DataFrame()
 
     if form.validate_on_submit():
 
@@ -33,20 +34,34 @@ def index():
 
         output = agg_contracts(reporting_date=reporting_date, aggregation_level=aggregation_level)
 
-        import pandas as pd
-        contracts = pd.DataFrame(output['contracts']).to_html()
-        value = pd.DataFrame(output['value']).to_html()
+        # comtracts
+        contracts_df = pd.DataFrame(
+            output['contracts'], columns=["Contracts"]).to_html(table_id="contracts",
+                                         classes=["table table-striped table-bordered table-hover"],
+                                         index=False)
 
-        daily = pd.DataFrame(output['daily']).to_html()
-        month = pd.DataFrame(output['month']).to_html()
-        year = pd.DataFrame(output['year']).to_html()
+        value_df = pd.DataFrame(output['value']).reset_index().to_html(table_id="value",
+                                         classes=["table table-striped table-bordered table-hover"],
+                                         index=False)
+
+        daily_df = pd.DataFrame(output['daily']).reset_index().to_html(table_id="daily",
+                                         classes=["table table-striped table-bordered table-hover"],
+                                         index=False)
+
+        month_df = pd.DataFrame(output['month']).reset_index().to_html(table_id="month",
+                                         classes=["table table-striped table-bordered table-hover"],
+                                         index=False)
+
+        year_df = pd.DataFrame(output['year']).reset_index().to_html(table_id="year",
+                                         classes=["table table-striped table-bordered table-hover"],
+                                         index=False)
 
     return render_template('portfolio.html', title='Home Page', form=form,
-                           contracts=contracts,
-                           value=value,
-                           daily=daily,
-                           month=month,
-                           year=year)
+                           contracts_df=contracts_df,
+                           value_df=value_df,
+                           daily_df=daily_df,
+                           month_df=month_df,
+                           year_df=year_df)
 
 
 if __name__ == "__main__":

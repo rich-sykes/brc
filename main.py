@@ -35,9 +35,9 @@ from libs.portfolio_func import calc_daily_return, calc_mtd_return, calc_ytd_ret
 
 
 # aggregation filter
-# aggregation_level = 'Instrument Asset Class'  # 'instrument_asset_class'
-# aggregation_level = 'Instrument Description'  # 'instrument'
-# aggregation_level = 'Contract Ticker'  # 'contract'
+# aggregation_level = 'Instrument Asset Class'
+# aggregation_level = 'Instrument Description'
+# aggregation_level = 'Contract Ticker'
 
 
 def agg_contracts(reporting_date, aggregation_level):
@@ -68,6 +68,7 @@ def agg_contracts(reporting_date, aggregation_level):
     contract_data = get_contract_data()
     trade_data = get_trade_data()
     price_data = get_price_data()
+
 
     # date functions
     # TODO: if current date isn't in price, select previous
@@ -175,7 +176,7 @@ def agg_contracts(reporting_date, aggregation_level):
                         right_on=['Contract Ticker'], how='left')
 
 
-    # merge previous day start prices
+    # get previous day start prices
     prev_day_date_idx = price_data.index[price_data.index.get_loc(prev_day_date, method='pad')]
 
     df_prev_day = pd.melt(price_data[price_data.index == prev_day_date_idx].reset_index(),
@@ -186,6 +187,7 @@ def agg_contracts(reporting_date, aggregation_level):
                              )
     df_prev_day['Previous Day Date'] = prev_day_date
 
+    # merge previous day start prices
     df_merge = pd.merge(df_merge, df_prev_day[['Contract Ticker', 'Previous Day Price', 'Previous Day Date']],
                         left_on=['Contract Ticker'],
                         right_on=['Contract Ticker'], how='left')
@@ -204,6 +206,8 @@ def agg_contracts(reporting_date, aggregation_level):
     mnt_pl = calc_mtd_return(df_merge, month_to_date, aggregation_level)
     year_pl = calc_ytd_return(df_merge, year_to_date, aggregation_level)
 
+
+    # get contracts
     contracts_held = calc_contracts_held(df_merge)
 
 
@@ -232,7 +236,6 @@ def agg_contracts(reporting_date, aggregation_level):
     output['contracts'] = contracts_held
 
     return output
-
 
 # output = agg_contracts(reporting_date='02/07/2019', aggregation_level='Instrument Asset Class')
 # output = agg_contracts(current_date, 'Instrument Description')

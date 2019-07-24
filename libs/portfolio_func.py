@@ -87,6 +87,7 @@ def calc_ytd_return(df_merge, year_to_date, aggregation_level):
 
 
 def calc_contracts_held(df_merge):
+
     # Position held in the portfolio( in contracts)
     contracts_held = df_merge[df_merge['Expired'] == 0][[
         'Contract Ticker', 'Contract Description', 'Traded Amount', 'Instrument Asset Class', 'Contract Expiry']]

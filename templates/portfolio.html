@@ -34,6 +34,16 @@
                             {{ wtf.form_field(form.aggregation_level)}}
                             <input type="submit" class="btn btn-primary" value="Submit"/>
                         </div>
+
+                        <div class="col-md-6">
+                            {% if reporting_date|length %}
+                            <p>Showing values as of {{reporting_date}}.</p>
+                            <p>All values are in USD.</p>
+
+                            {% endif %}
+                        </div>
+
+
                     </div>
                 </form>
             </div>
@@ -86,6 +96,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <b>Return: Daily [USD]</b>
+                    <p>Realised and Unrealised will only show when valid.</p>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
@@ -102,6 +113,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <b>Return: Month to Date [USD]</b>
+                    <p>Realised and Unrealised will only show when valid.</p>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
@@ -118,6 +130,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <b>Return: Year to Date [USD]</b>
+                    <p>Realised and Unrealised will only show when valid.</p>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">

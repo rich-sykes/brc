@@ -1,19 +1,20 @@
-# pypi libraries
-import pandas as pd
-
-# specific libs
-from libs.ini import source_path
-
-
 """
 libs.data is a pseudo data source function that will act as a substitute SQL connection
 
 formatting of data will also be handled in this section
 """
 
+# pypi libraries
+import pandas as pd
+from pandas.tseries.offsets import MonthEnd
+
+# specific libs
+from libs.ini import source_path
+
 
 # instrument_table
 def get_instrument_data():
+
     # import instrument_table
     instrument_table = pd.read_csv(source_path + "InstrumentTable.csv")
     
@@ -25,6 +26,20 @@ def get_instrument_data():
     instrument_table['Instrument Currency'] = instrument_table['Instrument Currency'].str.upper()
 
     return instrument_table
+
+
+# price_data
+def get_price_data():
+
+    # import price_data
+    price_data = pd.read_csv(source_path + "PriceData.csv")
+
+    # format price_data
+    price_data['Date'] = pd.to_datetime(price_data['Date'], format="%d/%m/%Y")
+    price_data.set_index('Date', inplace=True, drop=True)
+    price_data = price_data.apply(pd.to_numeric, args=('coerce',))
+
+    return price_data
 
 
 # contract_Table
@@ -41,10 +56,26 @@ def get_contract_data():
     contract_table['Contract Expiry'] = contract_table['Contract Description'].str.extract('([A-Z]{1}[a-z]{2}[0-9]{2})',
                                                                                            expand=True)
 
-    # todo: confirm month end
-    from pandas.tseries.offsets import MonthEnd
+    # init expiry date with month end
     contract_table['Contract Expiry'] = pd.to_datetime(contract_table['Contract Expiry'], format="%b%y") + MonthEnd(1)
 
+    price_data = get_price_data()
+
+    # list of contract tickers
+    contract_tickers = contract_table['Contract Ticker'].tolist()
+
+    # get last valid date (assumption for expiry date)
+    expiry_date = [price_data[item].last_valid_index() for item in contract_tickers]
+
+    contract_expiry = pd.DataFrame(list(zip(contract_tickers, expiry_date)),
+                                   columns=['Contract Ticker', 'Contract Expiry'])
+
+    # merge contract data with expiry
+    contract_table = pd.merge(
+        contract_table[['Contract Ticker', 'Contract Description', 'Instrument Code','Contract Multiplier']],
+        contract_expiry, on='Contract Ticker')
+
+    """
     contract_table.loc[contract_table['Contract Ticker'] == 'CDM9 Curncy', 'Contract Expiry'] \
         = pd.to_datetime("18/06/2019", format="%d/%m/%Y")
 
@@ -65,7 +96,7 @@ def get_contract_data():
 
     contract_table.loc[contract_table['Contract Ticker'] == 'USM9 Comdty', 'Contract Expiry'] \
         = pd.to_datetime("19/06/2019", format="%d/%m/%Y")
-
+    """
 
     return contract_table
 
@@ -84,21 +115,6 @@ def get_trade_data():
     trade_table['Traded Amount'] = trade_table['Traded Amount'].astype(float)
     trade_table['Avg Price Traded'] = trade_table['Avg Price Traded'].astype(float)
 
-
-
     return trade_table
-
-
-# price_data
-def get_price_data():
-    # import price_data
-    price_data = pd.read_csv(source_path + "PriceData.csv")
-
-    # format price_data
-    price_data['Date'] = pd.to_datetime(price_data['Date'], format="%d/%m/%Y")
-    price_data.set_index('Date', inplace=True, drop=True)
-    price_data = price_data.apply(pd.to_numeric, args=('coerce',))
-
-    return price_data
 
 # eof

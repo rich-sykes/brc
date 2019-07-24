@@ -1,5 +1,12 @@
+"""
+collection of aggregation functions
+
+"""
+
 import pandas as pd
 
+
+# daily p/l
 def calc_daily_return(df_merge, prev_day_date, aggregation_level):
     # daily calculation
     daily_df = df_merge[['Contract Ticker', 'Contract Description', 'Instrument Description',
@@ -28,6 +35,7 @@ def calc_daily_return(df_merge, prev_day_date, aggregation_level):
     return dly_pl
 
 
+# month to date p/l
 def calc_mtd_return(df_merge, month_to_date, aggregation_level):
 
     # month to date calculation
@@ -57,6 +65,7 @@ def calc_mtd_return(df_merge, month_to_date, aggregation_level):
     return mnt_pl
 
 
+# year to date p/l
 def calc_ytd_return(df_merge, year_to_date, aggregation_level):
 
     # year to date calculation
@@ -86,6 +95,7 @@ def calc_ytd_return(df_merge, year_to_date, aggregation_level):
     return year_pl
 
 
+# get all contracts held
 def calc_contracts_held(df_merge):
 
     # Position held in the portfolio( in contracts)
@@ -100,6 +110,5 @@ def calc_contracts_held(df_merge):
 
     contracts_held.Long = contracts_held.Long.astype(str)
     contracts_held.Short = contracts_held.Short.astype(str)
-
 
     return contracts_held

@@ -33,6 +33,7 @@ def index():
 
 
         output = agg_contracts(reporting_date=reporting_date, aggregation_level=aggregation_level)
+        pd.options.display.float_format = '${:,.2f}'.format
 
         # comtracts
         contracts_df = output['contracts'].to_html(table_id="contracts",

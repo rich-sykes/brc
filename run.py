@@ -35,8 +35,7 @@ def index():
         output = agg_contracts(reporting_date=reporting_date, aggregation_level=aggregation_level)
 
         # comtracts
-        contracts_df = pd.DataFrame(
-            output['contracts'], columns=["Contracts"]).to_html(table_id="contracts",
+        contracts_df = output['contracts'].to_html(table_id="contracts",
                                          classes=["table table-striped table-bordered table-hover"],
                                          index=False)
 
@@ -44,15 +43,15 @@ def index():
                                          classes=["table table-striped table-bordered table-hover"],
                                          index=False)
 
-        daily_df = pd.DataFrame(output['daily']).reset_index().to_html(table_id="daily",
+        daily_df = output['daily'].to_html(table_id="daily",
                                          classes=["table table-striped table-bordered table-hover"],
                                          index=False)
 
-        month_df = pd.DataFrame(output['month']).reset_index().to_html(table_id="month",
+        month_df = output['month'].to_html(table_id="month",
                                          classes=["table table-striped table-bordered table-hover"],
                                          index=False)
 
-        year_df = pd.DataFrame(output['year']).reset_index().to_html(table_id="year",
+        year_df = output['year'].to_html(table_id="year",
                                          classes=["table table-striped table-bordered table-hover"],
                                          index=False)
 

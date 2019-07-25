@@ -7,25 +7,52 @@ import pandas as pd
 
 
 # daily p/l
-def calc_daily_return(df_merge, prev_day_date, aggregation_level):
+def calc_daily_return(df, current_date, prev_day_date, aggregation_level):
+
     # daily calculation
-    daily_df = df_merge[['Contract Ticker', 'Contract Description', 'Instrument Description',
-                         'Instrument Asset Class',
-                         'Expired', 'Contract Expiry', 'Contract Multiplier', 'Traded Amount',
-                         'Previous Day Price', 'Final Price']]
+    daily_df = df[['Contract Ticker', 'Contract Description', 'Instrument Code',
+                   'Contract Multiplier', 'Contract Expiry',
+                   'Trade Date',
+                   'Traded Amount', 'Price', 'Avg Price Traded', 'Expired']]
 
     # remove tickers that have expired as no P/L
-    daily_df = daily_df[daily_df['Contract Expiry'] > prev_day_date]
+    # daily_df = daily_df[daily_df['Expired'] == 0]
 
-    daily_df['Price Change'] = daily_df['Final Price'] - daily_df['Previous Day Price']
+    # Contracts as of yesterday
+    daily_df['Traded Amount'].fillna(0, inplace=True)
+    daily_df.reset_index().sort_values(['Contract Ticker', 'Date'], inplace=True)
 
-    daily_df['P/L'] = daily_df['Price Change'] * \
-                      daily_df['Contract Multiplier'] * \
-                      daily_df['Traded Amount']
+    daily_df['Contracts'] = daily_df.groupby(by=['Contract Ticker'])['Traded Amount'].cumsum()
+    daily_df.sort_values(['Contract Ticker', 'Date'], inplace=True)
 
+    # previous contracts (sum)
+    daily_df['Previous Contracts'] = daily_df.groupby(by=['Contract Ticker'])['Contracts'].shift(periods=1)
+
+    # price change
+    daily_df['Price Diff'] = daily_df.groupby(by=['Contract Ticker'])['Price'].diff()
+
+    # PnL for held contracts
+    daily_df['PnL Existing'] = daily_df['Previous Contracts'] * daily_df['Price Diff'] * daily_df['Contract Multiplier']
+
+    # PnL for contracts traded
+    daily_df['PnL Traded'] = daily_df['Traded Amount'] * (daily_df['Price'] - daily_df['Avg Price Traded']) * daily_df['Contract Multiplier']
+
+    # PnL total
+    daily_df['Daily PnL'] = daily_df['PnL Existing'] + daily_df['PnL Traded']
+    daily_df['Daily PnL'] = daily_df[['PnL Existing', 'PnL Traded']].sum(axis=1)
+
+    # add realised flag
     daily_df['Status'] = ''
     daily_df['Status'][daily_df['Expired'] == 1] = 'Realised'
     daily_df['Status'][daily_df['Expired'] == 0] = 'Unrealised'
+
+    daily_df = daily_df[daily_df.index == current_date]
+
+    # valuation
+    daily_df['Valuation'] = daily_df[['Traded Amount', 'Previous Contracts']].sum(axis=1) * daily_df['Price'] * daily_df['Contract Multiplier']
+
+
+
 
     dly_pl = daily_df.groupby(by=[aggregation_level, 'Status'])['P/L'].sum().unstack(1).fillna(value=0)
     dly_pl.columns = dly_pl.columns.get_level_values(0)

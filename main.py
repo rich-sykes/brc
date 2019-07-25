@@ -42,7 +42,9 @@ from libs.portfolio_func import calc_daily_return, calc_mtd_return, calc_ytd_ret
 
 def agg_contracts(reporting_date, aggregation_level):
 
-    # reporting_date = '17/06/2019' reporting_date = '07/06/2019'
+    # reporting_date = '17/06/2019'
+    # reporting_date = '07/06/2019'
+    # reporting_date = '20/06/2019'
     # aggregation_level = 'Instrument Asset Class'
 
     """
@@ -74,6 +76,10 @@ def agg_contracts(reporting_date, aggregation_level):
     # TODO: if current date isn't in price, select previous
     current_date = pd.to_datetime(reporting_date, format="%d/%m/%Y")
 
+    # if weekend shift to weekday
+    while current_date.dayofweek > 4:
+        current_date = current_date - pd.Timedelta(days=1)
+
     # get financial reporting dates - previous day
     prev_day_date = current_date - pd.Timedelta(days=1)
 
@@ -83,31 +89,47 @@ def agg_contracts(reporting_date, aggregation_level):
     # get financial reporting dates - month start date
     year_to_date = current_date.replace(day=1, month=1)
 
+    price_data_pivot = price_data.reset_index().melt(id_vars='Date',
+                                                     var_name='Contract Ticker',
+                                                     value_name='Price').set_index('Date')
 
     # filter to date of report (remnove future trades)
+    price_data_pivot = price_data_pivot[price_data_pivot.index <= current_date]
     trade_data = trade_data[trade_data.index <= current_date]
 
+    df = pd.merge(price_data_pivot.reset_index(), trade_data.reset_index(),
+                  left_on=['Contract Ticker', 'Date'],
+                  right_on=['Contract Ticker', 'Trade Date'],
+                  how='left')
+
     # enrich with contract info
-    df = pd.merge(trade_data.reset_index(),
-                  contract_data[['Contract Ticker', 'Contract Description', 'Instrument Code',
-                                 'Contract Multiplier', 'Contract Expiry']],
-                  on=['Contract Ticker'])
+    df = pd.merge(df,
+                  contract_data[['Contract Ticker', 'Contract Description', 'Instrument Code', 'Contract Multiplier',
+                                 'Contract Expiry']],
+                  on=['Contract Ticker'],
+                  how='left')
 
     # contract expired flag
     df['Expired'] = 0
     df['Expired'][current_date >= df['Contract Expiry']] = 1
 
-
     # enrich with instrument info
     df = pd.merge(df,
                   instrument_data[[
                       'Instrument Code', 'Instrument Description', 'Instrument Asset Class', 'Instrument Currency']],
-                  on=['Instrument Code'])
+                  on=['Instrument Code'], how='left')
+
+    df = df.sort_values(['Date', 'Contract Ticker']).set_index('Date')
+
+    # --- df has all data and meta data ---
 
     # get ticker list
     contract_tickers = df['Contract Ticker'].unique().tolist()
 
 
+
+
+    """
     ## price data
     # start price (year to date) - in this case first data point in series
     year_to_date_idx = price_data.index[price_data.index.get_loc(year_to_date, method='backfill')]
@@ -214,7 +236,7 @@ def agg_contracts(reporting_date, aggregation_level):
     # Valuation sum:  units * current price
     df_merge['Final Value'] = abs(df_merge['Traded Amount']) * df_merge['Avg Price Traded']
     df_value = df_merge.groupby(by=aggregation_level)['Final Value'].sum()
-
+    """
 
     # output data -  dictionary
     output = {}
@@ -237,7 +259,7 @@ def agg_contracts(reporting_date, aggregation_level):
 
     return output
 
-# output = agg_contracts(reporting_date='02/07/2019', aggregation_level='Instrument Asset Class')
+# output = agg_contracts(reporting_date='20/06/2019', aggregation_level='Instrument Asset Class')
 # output = agg_contracts(current_date, 'Instrument Description')
 # output = agg_contracts(current_date, 'Contract Ticker')
 

@@ -62,16 +62,20 @@ def calc_valuation(daily_df, current_date, aggregation_level):
     # value_df.columns = value_df.columns.get_level_values(0)
 
     value_df = pd.DataFrame(value_df).reset_index()
+    value_df = value_df[value_df['Valuation'] != 0]
 
     return value_df
 
 
 # calculate contracts held on reporting date
-def calc_contracts_held(daily_df, current_date, aggregation_level):
+def calc_contracts_held(daily_df, current_date):
 
     daily_df = daily_df[daily_df.index == current_date]
-    holding_df = daily_df[['Contract Ticker', 'Contract Description', 'Contracts']]
+    holding_df = daily_df[['Contract Description', 'Contracts']]
     holding_df.columns = holding_df.columns.get_level_values(0)
+    holding_df = holding_df[holding_df['Contracts'] != 0]
+
+    holding_df['Contracts'] = holding_df['Contracts'].astype(int)
 
     # TODO: split to long/short
 

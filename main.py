@@ -121,7 +121,7 @@ def agg_contracts(reporting_date, aggregation_level):
     value_df = calc_valuation(daily_df, current_date, aggregation_level)
 
     # calculate contracts held on reporting date
-    holding_df = calc_contracts_held(daily_df, current_date, aggregation_level)
+    holding_df = calc_contracts_held(daily_df, current_date)
 
     # daily PnL
     daily_pnl_df = calc_daily_aggregate(daily_df, current_date, aggregation_level)

@@ -49,7 +49,7 @@ def index():
                                          index=False)
 
         # portfolio value
-        value_df = pd.DataFrame(output['value']).reset_index().to_html(table_id="value",
+        value_df = pd.DataFrame(output['value']).to_html(table_id="value",
                                          classes=["table table-striped table-bordered table-hover"],
                                          index=False)
 

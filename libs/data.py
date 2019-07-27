@@ -59,6 +59,7 @@ def get_contract_data():
     # init expiry date with month end
     contract_table['Contract Expiry'] = pd.to_datetime(contract_table['Contract Expiry'], format="%b%y") + MonthEnd(1)
 
+    # get price data
     price_data = get_price_data()
 
     # list of contract tickers
@@ -74,29 +75,6 @@ def get_contract_data():
     contract_table = pd.merge(
         contract_table[['Contract Ticker', 'Contract Description', 'Instrument Code','Contract Multiplier']],
         contract_expiry, on='Contract Ticker')
-
-    """
-    contract_table.loc[contract_table['Contract Ticker'] == 'CDM9 Curncy', 'Contract Expiry'] \
-        = pd.to_datetime("18/06/2019", format="%d/%m/%Y")
-
-    contract_table.loc[contract_table['Contract Ticker'] == 'ESM9 Index', 'Contract Expiry'] \
-        = pd.to_datetime("21/06/2019", format="%d/%m/%Y")
-
-    contract_table.loc[contract_table['Contract Ticker'] == 'JYM9 Curncy', 'Contract Expiry'] \
-        = pd.to_datetime("17/06/2019", format="%d/%m/%Y")
-
-    contract_table.loc[contract_table['Contract Ticker'] == 'MESM9 Index', 'Contract Expiry'] \
-        = pd.to_datetime("21/06/2019", format="%d/%m/%Y")
-
-    contract_table.loc[contract_table['Contract Ticker'] == 'RTYM9 Index', 'Contract Expiry'] \
-        = pd.to_datetime("21/06/2019", format="%d/%m/%Y")
-
-    contract_table.loc[contract_table['Contract Ticker'] == 'TYM9 Comdty', 'Contract Expiry'] \
-        = pd.to_datetime("19/06/2019", format="%d/%m/%Y")
-
-    contract_table.loc[contract_table['Contract Ticker'] == 'USM9 Comdty', 'Contract Expiry'] \
-        = pd.to_datetime("19/06/2019", format="%d/%m/%Y")
-    """
 
     return contract_table
 
